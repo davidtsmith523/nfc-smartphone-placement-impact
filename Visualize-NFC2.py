@@ -8,7 +8,8 @@ with open(file_path, 'r') as file:
     data = json.load(file)
 
 
-item = data[-1]
+item = data[69]
+# item = data[26]
 nfcPos = item.get("nfcPos", {})
 
 # Phone dimensions (normalized)
@@ -19,6 +20,8 @@ fig, ax = plt.subplots(figsize=(6, 8))
 
 phone = patches.Rectangle((0, 0), phone_width, phone_height, linewidth=2, edgecolor='blue', facecolor='lightblue', label="Phone")
 ax.add_patch(phone)
+
+print(nfcPos)
 
 nfc_antenna = patches.Rectangle((nfcPos['x0'], nfcPos['y0']), 
                                 nfcPos['x1'] - nfcPos['x0'], 

@@ -8,7 +8,8 @@ with open(file_path, 'r') as file:
     data = json.load(file)
 
 
-item = data[69]
+# item = data[34]
+item = data[84]
 # item = data[26]
 nfcPos = item.get("nfcPos", {})
 

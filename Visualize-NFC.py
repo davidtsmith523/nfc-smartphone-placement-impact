@@ -8,7 +8,9 @@ file_path = "NfcLocalization-Android/nfcChipsOutput/nfc_positions.json"
 with open(file_path, 'r') as file:
     data = json.load(file)
 
-item = data[110]
+item = data[26]
+# item = data[34] # Maximum Received Power
+# item = data[84] # Minimum Received Power
 # item = data[69] # Maximim Path Loss
 # item = data[75] # Minimum Path Loss
 nfcPos = item.get("nfcPos", {})

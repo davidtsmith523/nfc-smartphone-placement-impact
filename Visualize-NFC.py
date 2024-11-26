@@ -9,14 +9,17 @@ with open(file_path, 'r') as file:
     data = json.load(file)
 
 item = data[26]
+# item = data[-7] # Other optimal NFC placement
+# item = data[-11] # Other optimal NFC placement
+# item = data[26] # Other optimal NFC placement
 # item = data[34] # Maximum Received Power
 # item = data[84] # Minimum Received Power
 # item = data[69] # Maximim Path Loss
 # item = data[75] # Minimum Path Loss
 nfcPos = item.get("nfcPos", {})
 
-# Screen dimensions (pixels)
-width, height = 1080, 2400
+# Screen dimensions (mm)
+width, height = 75, 150
 
 x0, y0 = nfcPos["x0"] * width, nfcPos["y0"] * height
 x1, y1 = nfcPos["x1"] * width, nfcPos["y1"] * height
@@ -36,8 +39,8 @@ ax.set_xlim(0, width)
 ax.set_ylim(height, 0)
 ax.invert_xaxis()
 
-ax.set_title(f"{item['marketingName']} with NFC Antenna Placement")
-ax.set_xlabel("Width (pixels)")
-ax.set_ylabel("Height (pixels)")
+ax.set_title(f"{item['marketingName']} NFC Placement")
+ax.set_xlabel("Width (mm)")
+ax.set_ylabel("Height (mm)")
 
 plt.show()

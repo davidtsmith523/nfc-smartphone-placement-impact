@@ -22,6 +22,22 @@ def print_recieved_power_stats(data):
     print(f"Maximum Received Power: {max_loss:.2f} dB")
     print(f"Average Received Power: {avg_loss:.2f} dB")   
 
+def scale_gain(reference_gain, reference_size, new_size):
+    """
+    Scale antenna gain based on new antenna size.
+
+    Args:
+        reference_gain (float): Reference gain in dB.
+        reference_size (float): Area of the reference antenna (in m²).
+        new_size (float): Area of the new antenna (in m²).
+
+    Returns:
+        float: Scaled gain in dB.
+    """
+    scaling_factor = new_size / reference_size
+    scaled_gain = reference_gain + (10 * math.log10(scaling_factor))
+    return scaled_gain
+
 def scale_antenna_power(reference_power, reference_size, new_size):
     """
     Scale antenna power based on new antenna size.
@@ -39,7 +55,7 @@ def scale_antenna_power(reference_power, reference_size, new_size):
     return scaled_power
 
 
-def calculate_path_loss(frequency, x0, y0, x1, y1):
+def calculate_path_loss_and_recieved_power(frequency, x0, y0, x1, y1):
     """
     Calculate the Friis path loss using average phone dimensions.
 
@@ -57,7 +73,12 @@ def calculate_path_loss(frequency, x0, y0, x1, y1):
     width = (x1 - x0) * average_width
     height = (y1 - y0) * average_height
 
-    scaled_power = scale_antenna_power(-50, 0.002025, width * height)
+    reference_size = 0.002025  # Reference antenna size
+    reference_power = -50  # Reference power in dB
+    reference_transmitted_gain = 0  # Reference gain transmitted in dB
+    reference_recieved_gain = 0  # Reference gain recieved in dB
+
+    scaled_power = scale_antenna_power(reference_power, reference_size, width * height)
     
     # Convert normalized coordinates to physical dimensions
     nfc_top = y0 * average_height
@@ -66,14 +87,18 @@ def calculate_path_loss(frequency, x0, y0, x1, y1):
 
     # Receiver is a line along the width of the phone, 4 cm (0.04 m) above the top of the phone
     receiver_y = -0.04
+    receiver_size = average_width * average_width
 
     # The shortest distance is simply the vertical distance to the receiver line
     distance = abs(nfc_center_y - receiver_y)
 
-    # Friis path loss formula
     c = 3e8  # Speed of light in m/s
-    transmitter_gain = 0
-    receiver_gain = 0
+    receiver_gain = scale_gain(reference_recieved_gain, reference_size, receiver_size) # This will be the same every loop = 4.436974992327127
+    
+    # Scale the transmitted gain based on the antenna size
+    transmitter_gain = scale_gain(reference_transmitted_gain, reference_size, width * height) # This will change every loop
+
+    # Friis path loss formula
     path_loss = (
         20 * math.log10(distance) +
         20 * math.log10(frequency) -
@@ -97,7 +122,7 @@ if __name__ == "__main__":
 
     for i, item in enumerate(data):
         nfc_pos = item.get("nfcPos", {})
-        path_loss, power_recieved = calculate_path_loss(frequency, nfc_pos['x0'], nfc_pos['y0'], nfc_pos['x1'], nfc_pos['y1'])
+        path_loss, power_recieved = calculate_path_loss_and_recieved_power(frequency, nfc_pos['x0'], nfc_pos['y0'], nfc_pos['x1'], nfc_pos['y1'])
         item['path_loss'] = path_loss
         item["received_power"] = power_recieved
         results.append(item)

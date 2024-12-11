@@ -9,12 +9,16 @@ To find the most optimal placement a few techniques were used:
 1. Path Loss Calculation Program
 
 - This uses the Friis equation to calculate the path loss of each NFC placement in the smartphone.
+  - A standard phone is used for the width (75mm) and height (150mm).
   - The receiver is placed 4cm from the head of the phone.
-  - A standard phone is used as the width and height.
+  - The reciever is assumed to be 75mm x 75mm.
+  - The reciever gain is fixed since the receiver area is fixed.
+  - The transmitted gain is scaled based on the size of the NFC in each smartphone.
 
 2. Signal Strength Calculation Program
 
 - This uses the formula Pr = Pt - PL to find the most optimal NFC placement
+  - For PL, the same formula from above is used.
   - For Pt, an average NFC size and power is used and then scaled based on the size of NFC in each smartphone
 
 ## Technologies Used

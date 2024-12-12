@@ -58,7 +58,7 @@ def calculate_path_loss(frequency, x0, y0, x1, y1):
 
     reference_size = 0.002025  # Reference antenna size
     reference_transmitted_gain = 0  # Reference gain transmitted in dB
-    reference_recieved_gain = 0  # Reference gain recieved in dB
+    reference_received_gain = 0  # Reference gain received in dB
 
 
     # Convert normalized coordinates to physical dimensions
@@ -75,7 +75,7 @@ def calculate_path_loss(frequency, x0, y0, x1, y1):
     distance = abs(nfc_center_y - receiver_y)
 
     c = 3e8  # Speed of light in m/s
-    receiver_gain = scale_gain(reference_recieved_gain, reference_size, receiver_size) # This will be the same every loop = 4.436974992327127
+    receiver_gain = scale_gain(reference_received_gain, reference_size, receiver_size) # This will be the same every loop = 4.436974992327127
     
     # Scale the transmitted gain based on the antenna size
     transmitter_gain = scale_gain(reference_transmitted_gain, reference_size, width * height) # This will change every loop
@@ -105,7 +105,7 @@ if __name__ == "__main__":
     for i, item in enumerate(data):
         nfc_pos = item.get("nfcPos", {})
         path_loss = calculate_path_loss(frequency, nfc_pos['x0'], nfc_pos['y0'], nfc_pos['x1'], nfc_pos['y1'])
-        # print(f"Friis Path Loss {i}: {path_loss:.2f} dB")
+        print(f"Friis Path Loss {i}: {path_loss:.2f} dB")
         item['path_loss'] = path_loss
         results.append(item)
 

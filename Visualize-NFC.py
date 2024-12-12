@@ -13,9 +13,9 @@ item = data[26]
 # item = data[-11] # Other optimal NFC placement
 # item = data[26] # Other optimal NFC placement
 # item = data[34] # Maximum Received Power
-# item = data[84] # Minimum Received Power
-# item = data[69] # Maximim Path Loss
-# item = data[75] # Minimum Path Loss
+# item = data[75] # Minimum Received Power
+# item = data[84] # Maximim Path Loss
+# item = data[34] # Minimum Path Loss
 nfcPos = item.get("nfcPos", {})
 
 # Screen dimensions (mm)

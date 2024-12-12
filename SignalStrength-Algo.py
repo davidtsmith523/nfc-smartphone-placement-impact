@@ -1,17 +1,17 @@
 import json
 import math
 
-def print_recieved_power_stats(data):
+def print_received_power_stats(data):
     """
-    Calculate and print the minimum, maximum, and average recieved power from the data.
+    Calculate and print the minimum, maximum, and average received power from the data.
     
     Args:
-        data (list): List of dictionaries containing recieved power values under the key 'received_power'.
+        data (list): List of dictionaries containing received power values under the key 'received_power'.
     """
     received_powers = [item.get('received_power', 0) for item in data if 'received_power' in item]
     
     if not received_powers:
-        print("No recieved power data available.")
+        print("No received power data available.")
         return
     
     min_loss = min(received_powers)
@@ -55,7 +55,7 @@ def scale_antenna_power(reference_power, reference_size, new_size):
     return scaled_power
 
 
-def calculate_path_loss_and_recieved_power(frequency, x0, y0, x1, y1):
+def calculate_path_loss_and_received_power(frequency, x0, y0, x1, y1):
     """
     Calculate the Friis path loss using average phone dimensions.
 
@@ -76,7 +76,7 @@ def calculate_path_loss_and_recieved_power(frequency, x0, y0, x1, y1):
     reference_size = 0.002025  # Reference antenna size
     reference_power = -50  # Reference power in dB
     reference_transmitted_gain = 0  # Reference gain transmitted in dB
-    reference_recieved_gain = 0  # Reference gain recieved in dB
+    reference_received_gain = 0  # Reference gain received in dB
 
     scaled_power = scale_antenna_power(reference_power, reference_size, width * height)
     
@@ -93,7 +93,7 @@ def calculate_path_loss_and_recieved_power(frequency, x0, y0, x1, y1):
     distance = abs(nfc_center_y - receiver_y)
 
     c = 3e8  # Speed of light in m/s
-    receiver_gain = scale_gain(reference_recieved_gain, reference_size, receiver_size) # This will be the same every loop = 4.436974992327127
+    receiver_gain = scale_gain(reference_received_gain, reference_size, receiver_size) # This will be the same every loop = 4.436974992327127
     
     # Scale the transmitted gain based on the antenna size
     transmitter_gain = scale_gain(reference_transmitted_gain, reference_size, width * height) # This will change every loop
@@ -107,8 +107,8 @@ def calculate_path_loss_and_recieved_power(frequency, x0, y0, x1, y1):
         receiver_gain
     )
 
-    power_recieved = scaled_power - path_loss
-    return path_loss, power_recieved
+    power_received = scaled_power - path_loss
+    return path_loss, power_received
 
 
 if __name__ == "__main__":
@@ -122,9 +122,11 @@ if __name__ == "__main__":
 
     for i, item in enumerate(data):
         nfc_pos = item.get("nfcPos", {})
-        path_loss, power_recieved = calculate_path_loss_and_recieved_power(frequency, nfc_pos['x0'], nfc_pos['y0'], nfc_pos['x1'], nfc_pos['y1'])
+        path_loss, power_received = calculate_path_loss_and_received_power(frequency, nfc_pos['x0'], nfc_pos['y0'], nfc_pos['x1'], nfc_pos['y1'])
         item['path_loss'] = path_loss
-        item["received_power"] = power_recieved
+        item["received_power"] = power_received
+        print(f"Received Power {i}: {power_received:.2f} dB")
+
         results.append(item)
 
     # Save the results to a JSON file
@@ -133,4 +135,4 @@ if __name__ == "__main__":
         json.dump(results, file, indent=4)
 
     print(f"Results saved to {output_file}")
-    print_recieved_power_stats(results)
+    print_received_power_stats(results)
